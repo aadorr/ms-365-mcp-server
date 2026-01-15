@@ -264,14 +264,16 @@
     "method": "get",
     "toolName": "get-excel-range",
     "isExcelOp": true,
-    "scopes": ["Files.Read"]
+    "scopes": ["Files.Read"],
+    "llmTip": "CRITICAL: The 'address' parameter must be a valid Excel range in A1 notation WITHOUT quotes (e.g., 'A1:E20', 'Sheet1!A1:B10', or 'A:A' for entire column). The workbookWorksheet-id must be either a worksheet name or the worksheet ID in GUID format like '{00000000-0001-0000-0000-000000000000}'. Use 'list-excel-worksheets' first to get valid worksheet IDs before calling this tool."
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets",
     "method": "get",
     "toolName": "list-excel-worksheets",
     "isExcelOp": true,
-    "scopes": ["Files.Read"]
+    "scopes": ["Files.Read"],
+    "llmTip": "CRITICAL: Use this tool FIRST before any other Excel operations to get valid worksheet IDs. The drive-id is the user's OneDrive ID (get from 'list-drives'), and driveItem-id is the Excel file's item ID (get from 'list-folder-files' or 'download-onedrive-file-content'). Returns worksheet names and IDs needed for other Excel tools."
   },
   {
     "pathPattern": "/me/onenote/notebooks",
