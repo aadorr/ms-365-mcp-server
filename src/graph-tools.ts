@@ -20,6 +20,7 @@ interface EndpointConfig {
   returnDownloadUrl?: boolean;
   supportsTimezone?: boolean;
   llmTip?: string;
+  headers?: Record<string, string>;
 }
 
 const endpointsData = JSON.parse(
@@ -171,6 +172,11 @@ async function executeGraphTool(
     if (config?.supportsTimezone && params.timezone) {
       headers['Prefer'] = `outlook.timezone="${params.timezone}"`;
       logger.info(`Setting timezone header: Prefer: outlook.timezone="${params.timezone}"`);
+    }
+
+    // Apply static headers from configuration
+    if (config?.headers) {
+      Object.assign(headers, config.headers);
     }
 
     if (Object.keys(queryParams).length > 0) {

@@ -448,7 +448,8 @@
     "pathPattern": "/chats/{chat-id}/messages",
     "method": "post",
     "toolName": "send-chat-message",
-    "workScopes": ["ChatMessage.Send"]
+    "workScopes": ["ChatMessage.Send"],
+    "llmTip": "CRITICAL: The body parameter must be a full chatMessage object with nested structure. Required format: { \"body\": { \"contentType\": \"text\", \"content\": \"Your message here\" } }. Do NOT send just { \"content\": \"...\" }. The 'body' property is required and must contain both 'contentType' and 'content' fields."
   },
   {
     "pathPattern": "/me/joinedTeams",
@@ -588,5 +589,49 @@
     "toolName": "search-query",
     "scopes": ["Mail.Read", "Calendars.Read", "Files.Read.All", "People.Read"],
     "workScopes": ["Sites.Read.All", "Chat.Read", "ChannelMessage.Read.All"]
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}",
+    "method": "get",
+    "toolName": "get-online-meeting",
+    "workScopes": ["OnlineMeetings.Read"],
+    "llmTip": "CRITICAL: The onlineMeeting-id MUST be a valid base64-encoded meeting ID. If you only have a Chat ID (Thread ID) or a Join URL, you cannot use this tool directly. Instead, use 'list-online-meetings' with a filter on the joinWebUrl."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings",
+    "method": "get",
+    "toolName": "list-online-meetings",
+    "workScopes": ["OnlineMeetings.Read"],
+    "llmTip": "CRITICAL: Use this tool to find a meeting ID from a Join URL. Example: $filter=\"joinWebUrl eq 'https://teams.microsoft.com/l/meetup-join/...'\" (URL must be encoded). If you have a Chat ID, first use 'get-chat' to find the 'onlineMeetingInfo.joinWebUrl', then use this tool."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/transcripts",
+    "method": "get",
+    "toolName": "list-meeting-transcripts",
+    "workScopes": ["OnlineMeetingTranscript.Read.All"],
+    "llmTip": "Lists available transcripts. Use the resulting transcript-id with 'get-meeting-transcript-content'. Requires a valid onlineMeeting-id (not a Chat ID)."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/transcripts/{callTranscript-id}/content",
+    "method": "get",
+    "toolName": "get-meeting-transcript-content",
+    "workScopes": ["OnlineMeetingTranscript.Read.All"],
+    "headers": {
+      "Accept": "text/vtt"
+    },
+    "llmTip": "Retrieves the VTT content of the transcript."
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/recordings",
+    "method": "get",
+    "toolName": "list-meeting-recordings",
+    "workScopes": ["OnlineMeetingRecording.Read.All"]
+  },
+  {
+    "pathPattern": "/me/onlineMeetings/{onlineMeeting-id}/recordings/{callRecording-id}/content",
+    "method": "get",
+    "toolName": "get-meeting-recording-content",
+    "workScopes": ["OnlineMeetingRecording.Read.All"],
+    "returnDownloadUrl": true
   }
 ]
