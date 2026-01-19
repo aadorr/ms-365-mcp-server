@@ -181,7 +181,8 @@
     "method": "get",
     "toolName": "get-calendar-view",
     "scopes": ["Calendars.Read"],
-    "supportsTimezone": true
+    "supportsTimezone": true,
+    "llmTip": "REQUIRED: Must provide startDateTime and endDateTime query parameters (ISO 8601 format). Do NOT use $filter parameter - properties like 'isOnlineMeeting' do not support filtering on this endpoint. To find online meetings: get calendar view for a date range, then filter results in your code by checking the 'isOnlineMeeting' property."
   },
   {
     "pathPattern": "/me/calendars",
@@ -424,7 +425,8 @@
     "pathPattern": "/me/chats",
     "method": "get",
     "toolName": "list-chats",
-    "workScopes": ["Chat.Read"]
+    "workScopes": ["Chat.Read"],
+    "llmTip": "Lists all Teams chats the user is part of. Returns chat objects with 'id' field. ALWAYS use this tool FIRST to discover valid chat IDs before calling list-chat-messages or send-chat-message."
   },
   {
     "pathPattern": "/chats/{chat-id}",
@@ -436,20 +438,22 @@
     "pathPattern": "/chats/{chat-id}/messages",
     "method": "get",
     "toolName": "list-chat-messages",
-    "workScopes": ["ChatMessage.Read"]
+    "workScopes": ["ChatMessage.Read"],
+    "llmTip": "REQUIRED: You must provide a valid {chat-id} obtained from list-chats tool. The chat-id is the 'id' field from a chat object (format: 19:xxx@thread.v2). Do NOT guess or construct chat IDs - they must come from list-chats API response."
   },
   {
     "pathPattern": "/chats/{chat-id}/messages/{chatMessage-id}",
     "method": "get",
     "toolName": "get-chat-message",
-    "workScopes": ["ChatMessage.Read"]
+    "workScopes": ["ChatMessage.Read"],
+    "llmTip": "REQUIRED: Provide valid {chat-id} from list-chats and {chatMessage-id} from list-chat-messages. Do not guess IDs."
   },
   {
     "pathPattern": "/chats/{chat-id}/messages",
     "method": "post",
     "toolName": "send-chat-message",
     "workScopes": ["ChatMessage.Send"],
-    "llmTip": "CRITICAL: The body parameter must be a full chatMessage object with nested structure. Required format: { \"body\": { \"contentType\": \"text\", \"content\": \"Your message here\" } }. Do NOT send just { \"content\": \"...\" }. The 'body' property is required and must contain both 'contentType' and 'content' fields."
+    "llmTip": "REQUIRED: 1) {chat-id} must be obtained from list-chats tool first. 2) Body format: { \"body\": { \"contentType\": \"text\", \"content\": \"Your message\" } }. The 'body' parameter must be a nested object with both 'contentType' and 'content' fields."
   },
   {
     "pathPattern": "/me/joinedTeams",
