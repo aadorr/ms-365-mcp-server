@@ -21,6 +21,7 @@ interface EndpointConfig {
   supportsTimezone?: boolean;
   llmTip?: string;
   headers?: Record<string, string>;
+  skipEncoding?: string[]; // Parameter names that should NOT be URL-encoded (for function-style API calls)
 }
 
 const endpointsData = JSON.parse(
@@ -126,17 +127,24 @@ async function executeGraphTool(
 
       if (paramDef) {
         switch (paramDef.type) {
-          case 'Path':
+          case 'Path': {
+            // Check if this parameter should skip URL encoding (for function-style API calls)
+            const shouldSkipEncoding = config?.skipEncoding?.includes(paramName) ?? false;
+            const encodedValue = shouldSkipEncoding
+              ? (paramValue as string)
+              : encodeURIComponent(paramValue as string);
+            
             path = path
-              .replace(`{${paramName}}`, encodeURIComponent(paramValue as string))
-              .replace(`:${paramName}`, encodeURIComponent(paramValue as string));
+              .replace(`{${paramName}}`, encodedValue)
+              .replace(`:${paramName}`, encodedValue);
             break;
+          }
 
           case 'Query':
             queryParams[fixedParamName] = `${paramValue}`;
             break;
 
-          case 'Body':
+          case 'Body': {
             if (paramDef.schema) {
               const parseResult = paramDef.schema.safeParse(paramValue);
               if (!parseResult.success) {
@@ -157,6 +165,7 @@ async function executeGraphTool(
               body = paramValue;
             }
             break;
+          }
 
           case 'Header':
             headers[fixedParamName] = `${paramValue}`;

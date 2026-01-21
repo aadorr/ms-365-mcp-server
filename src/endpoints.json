@@ -218,14 +218,16 @@
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/children",
     "method": "get",
     "toolName": "list-folder-files",
-    "scopes": ["Files.Read"]
+    "scopes": ["Files.Read"],
+    "llmTip": "Lists files and folders. Response includes 'file' object with 'mimeType' property to identify file types. Use this to determine which tool to use next: Excel files (application/vnd.openxmlformats-officedocument.spreadsheetml.sheet) → use Excel tools, Text files (text/*, application/json) → fetch content via download URL, Other files → provide download URL to user."
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/content",
     "method": "get",
     "toolName": "download-onedrive-file-content",
     "scopes": ["Files.Read"],
-    "returnDownloadUrl": true
+    "returnDownloadUrl": true,
+    "llmTip": "Returns download URL for the file. File type handling: Excel files (.xlsx, .xls) - Use 'list-excel-worksheets' and 'get-excel-range' tools to read structured data instead of downloading. Text files (.txt, .csv, .json, .md) - You can fetch and read the URL content directly. Binary files (images, videos, executables, PDFs) - Provide the URL to the user as-is. Word/PowerPoint files (.docx, .pptx) - Currently only URL available; content extraction not supported via API."
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}",
@@ -266,7 +268,8 @@
     "toolName": "get-excel-range",
     "isExcelOp": true,
     "scopes": ["Files.Read"],
-    "llmTip": "CRITICAL: The 'address' parameter must be a valid Excel range in A1 notation WITHOUT quotes (e.g., 'A1:E20', 'Sheet1!A1:B10', or 'A:A' for entire column). The workbookWorksheet-id must be either a worksheet name or the worksheet ID in GUID format like '{00000000-0001-0000-0000-000000000000}'. Use 'list-excel-worksheets' first to get valid worksheet IDs before calling this tool."
+    "skipEncoding": ["address"],
+    "llmTip": "Gets data from an Excel range. CRITICAL: Call 'list-excel-worksheets' first to get worksheet names. Use the 'name' field (e.g., 'Sheet1', 'Data') as workbookWorksheet-id. The 'address' must be a simple Excel range like 'A1:E20' or 'B2' (letters and numbers only, colon for ranges). Avoid special characters or sheet name prefixes like 'Sheet1!A1'."
   },
   {
     "pathPattern": "/drives/{drive-id}/items/{driveItem-id}/workbook/worksheets",
@@ -298,8 +301,7 @@
     "pathPattern": "/me/onenote/pages/{onenotePage-id}/content",
     "method": "get",
     "toolName": "get-onenote-page-content",
-    "scopes": ["Notes.Read"],
-    "returnDownloadUrl": true
+    "scopes": ["Notes.Read"]
   },
   {
     "pathPattern": "/me/onenote/pages",
