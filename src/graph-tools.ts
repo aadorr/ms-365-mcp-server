@@ -236,6 +236,7 @@ async function executeGraphTool(
     }
 
     logger.info(`Making graph request to ${path} with options: ${JSON.stringify(options)}`);
+    
     let response = await graphClient.graphRequest(path, options);
 
     const fetchAllPages = params.fetchAllPages === true;
